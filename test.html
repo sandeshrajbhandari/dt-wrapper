@@ -1,0 +1,114 @@
+<script type="text/babel">
+  
+    // Destructure hooks from the global React object
+    const { useState, useEffect } = React;
+  
+    function App() {
+      const [prompt, setPrompt] = useState("");
+      const [loading, setLoading] = useState(false);
+      const [image, setImage] = useState(null);
+      const [error, setError] = useState(null);
+  
+      async function fetchImage() {
+        setLoading(true);
+        setError(null);
+        setImage(null);
+        
+        const DRAW_THINGS_URL = "http://0.0.0.0:7859/sdapi/v1/txt2img";
+        const paramJson = `
+        {"height":512,"seedMode":2,"preserveOriginalAfterInpaint":true,"seed":2994401011,"loras":[{"file":"tcd_sd_v1.5_lora_f16.ckpt","weight":1}],"steps":4,"controls":[],"maskBlur":1.5,"sharpness":0,"sampler":9,"width":512,"strength":1,"clipSkip":1,"batchCount":1,"batchSize":1,"guidanceScale":1,"stochasticSamplingGamma":0.29999999999999999,"tiledDiffusion":false,"shift":1,"hiresFix":false,"tiledDecoding":false,"maskBlurOutset":0,"model":"dreamshaper_v8_q6p_q8p.ckpt"}
+  `
+  const params = JSON.parse(paramJson);
+  const opts = {
+          method: "POST",
+          // mode: 'no-cors',
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(params),
+        };
+  
+        try {
+          const res = await fetch(DRAW_THINGS_URL, opts);
+  
+          if (!res.ok) {
+            const errorText = await res.text();
+            throw new Error(`Failed to generate image: ${res.status} ${errorText}`);
+          }
+  
+          const data = await res.json();
+          const imageBase64 = data.images[0];
+          
+          setImage(`data:image/png;base64,${imageBase64}`);
+  
+        } catch (err) {
+          console.error("Failed to generate image", err);
+          setError(err.message);
+        } finally {
+          setLoading(false);
+        }
+      }
+      
+      // Handle form submission with Enter key
+      const handleFormSubmit = (e) => {
+          e.preventDefault();
+          if (!loading && prompt.trim() !== "") {
+              fetchImage();
+          }
+      };
+  
+      return (
+        <div style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+          gap: "1rem"
+        }}>
+          <h1>Drawthings API Demo</h1>
+          <form onSubmit={handleFormSubmit} className="card" style={{width: '100%', boxSizing: 'border-box'}}>
+            <div
+              style={{
+                display: "flex",
+                gap: "1rem",
+                alignItems: "center",
+                justifyContent: "center",
+                width: '100%'
+              }}
+            >
+              <input
+                type="text"
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                placeholder="Enter a prompt..."
+              />
+              <button
+                type="submit"
+                disabled={loading || prompt.trim() === ""}
+              >
+                {loading ? "Loading..." : "Generate"}
+              </button>
+            </div>
+          </form>
+          
+          {error && <p style={{ color: 'red' }}>Error: {error}</p>}
+          
+          {loading && <p>Generating image, please wait...</p>}
+  
+          {image && !loading && (
+            <img
+              src={image}
+              width={512}
+              alt="Generated Image"
+            />
+          )}
+        </div>
+      );
+    }
+    
+    // Render the App component into the #root div
+    const container = document.getElementById('root');
+    const root = ReactDOM.createRoot(container);
+    root.render(<App />);
+  
+  </script>
+  </body>
+  </html>
