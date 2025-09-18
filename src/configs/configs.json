@@ -1,0 +1,21 @@
+{
+  "qwen-edit-fast": {
+    "model": "qwen_image_edit_1.0_q6p.ckpt",
+    "loras": [
+      {
+        "mode": "base", 
+        "file": "qwen_image_edit_1.0_lightning_4_step_v1.0_lora_f16.ckpt",
+        "weight": 1
+      }
+    ],
+    "sampler": "UniPC Trailing",
+    "controls": [],
+    "height": 1024,
+    "shift": 3.1581929,
+    "sharpness": 0,
+    "seed": 2666038116,
+    "width": 1024,
+    "steps": 4,
+    "strength": 1
+  }
+}

@@ -1,4 +1,6 @@
 // DrawThings API configurations for different models
+import jsonConfigs from './configs.json';
+
 export const drawThingsConfigs = {
   // Default configuration (current one)
   default: {
@@ -89,24 +91,8 @@ export const drawThingsConfigs = {
     guiding_frame_noise: 0.0199999995529652,
     original_width: 512
   },
-
-  // You can add more configurations here for different models
-  // Example:
-  // stableDiffusion: {
-  //   steps: 20,
-  //   sampler: "Euler a",
-  //   width: 512,
-  //   height: 512,
-  //   // ... other parameters
-  // },
-  
-  // midjourney: {
-  //   steps: 30,
-  //   sampler: "DPM++ 2M Karras",
-  //   width: 768,
-  //   height: 768,
-  //   // ... other parameters
-  // }
+  // JSON-provided configs merged below
+  ...jsonConfigs
 };
 
 // Helper function to get a specific configuration
