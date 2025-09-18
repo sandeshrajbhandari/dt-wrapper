@@ -2,7 +2,7 @@
 import fetch from 'node-fetch';
 
 async function testDrawThingsAPI() {
-  const baseUrl = 'http://localhost:7859';
+  const baseUrl = 'http://localhost:7860';
   
   try {
     console.log('Testing DrawThings API connection...');
